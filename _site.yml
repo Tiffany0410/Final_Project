@@ -14,6 +14,3 @@ navbar:
       href: https://jsc370.github.io/jsc370-2022/
   html_document:
     theme: cosmo
-    include:
-      after_body: footer.html
-    css: styles.css
