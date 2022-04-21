@@ -16,7 +16,6 @@ A person's life expectancy is a statistical measure of the average time is expec
 The data was from Kaggle https://www.kaggle.com/kumarajarshi/life-expectancy-who. The data contains information related to life expectancy, health, economic and other factors for 193 countries from year 2000 to 2015. The original data related to life expectancy, health factors for 193 countries have been collected from `WHO` data repository website and its corresponding economic data was collected from `United Nation` website. 
 
 
-
 ### Interactive Visualizations
 
 ```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
