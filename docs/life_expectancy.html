@@ -11,7 +11,6 @@
 
 <meta name="author" content="Shi Tang" />
 
-<meta name="date" content="2022-10-03" />
 
 <title>Life Expectancy from WHO Dataset</title>
 
@@ -263,21 +262,23 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Life Expectancy from WHO Dataset</h1>
 <h4 class="author">Shi Tang</h4>
-<h4 class="date">10/03/2022</h4>
+<h4 class="date">21/04/2022</h4>
 
 </div>
 
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>Provide background on your dataset and formulated question ### How does immunization coverage affect life expectancy for year 2015? A person’s life expectancy is a statistical measure of the average time is expected to live, based on several factors such as birth, age, and other demographic factors. Indeed, the United Nations estimates a global average life expectancy of 72.6 years for 2019 – which is higher than in any country back in 1950. Therefore, I am interested in exploring the impact of immunization coverage on life expectancy for the year 2015.</p>
-<p>The data-set was from Kaggle <a href="https://www.kaggle.com/kumarajarshi/life-expectancy-who" class="uri">https://www.kaggle.com/kumarajarshi/life-expectancy-who</a>, and the original data related to life expectancy, health factors for 193 countries have been collected from WHO data repository website and its corresponding economic data was collected from United Nation website.</p>
+<div id="what-aspects-should-be-considered-in-order-to-increase-life-expectancy" class="section level3">
+<h3>What aspect(s) should be considered in order to increase life expectancy?</h3>
+<p>A person’s life expectancy is a statistical measure of the average time is expected to live, based on several factors such as birth, age, and other demographic factors. Indeed, the United Nations estimates a global average life expectancy of 72.6 years for 2019 – which is higher than in any country back in 1950. Therefore, I am interested to find the factor(s) contributing to the increase in life expectancy using predictive model.</p>
+<p>The data was from Kaggle <a href="https://www.kaggle.com/kumarajarshi/life-expectancy-who" class="uri">https://www.kaggle.com/kumarajarshi/life-expectancy-who</a>. The data contains information related to life expectancy, health, economic and other factors for 193 countries from year 2000 to 2015. The original data related to life expectancy, health factors for 193 countries have been collected from <code>WHO</code> data repository website and its corresponding economic data was collected from <code>United Nation</code> website.</p>
+</div>
 </div>
 <div id="methods" class="section level2">
 <h2>Methods</h2>
-<p>include how and where the data were acquired, how you cleaned and wrangled the data, what tools you used for data exploration</p>
-<div id="missing-values" class="section level3">
-<h3>Missing values</h3>
+<p>First, we need to import the data-set. The data-set consists of 22 columns and 2938 rows.</p>
+<p>The following table shows all factors and their corresponding missing values count and percentage:</p>
 <table>
 <thead>
 <tr class="header">
@@ -303,17 +304,17 @@ $(document).ready(function () {
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
-<td align="left">Life_expectancy</td>
+<td align="left">Life expectancy</td>
 <td align="right">10</td>
 <td align="right">0.340</td>
 </tr>
 <tr class="odd">
-<td align="left">Adult_Mortality</td>
+<td align="left">Adult Mortality</td>
 <td align="right">10</td>
 <td align="right">0.340</td>
 </tr>
 <tr class="even">
-<td align="left">infant_deaths</td>
+<td align="left">infant deaths</td>
 <td align="right">0</td>
 <td align="right">0.000</td>
 </tr>
@@ -323,12 +324,12 @@ $(document).ready(function () {
 <td align="right">6.603</td>
 </tr>
 <tr class="even">
-<td align="left">percentage_expenditure</td>
+<td align="left">percentage expenditure</td>
 <td align="right">0</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
-<td align="left">Hepatitis_B</td>
+<td align="left">Hepatitis B</td>
 <td align="right">553</td>
 <td align="right">18.822</td>
 </tr>
@@ -343,7 +344,7 @@ $(document).ready(function () {
 <td align="right">1.157</td>
 </tr>
 <tr class="even">
-<td align="left">under_five_deaths</td>
+<td align="left">under-five deaths</td>
 <td align="right">0</td>
 <td align="right">0.000</td>
 </tr>
@@ -353,7 +354,7 @@ $(document).ready(function () {
 <td align="right">0.647</td>
 </tr>
 <tr class="even">
-<td align="left">Total_expenditure</td>
+<td align="left">Total expenditure</td>
 <td align="right">226</td>
 <td align="right">7.692</td>
 </tr>
@@ -363,7 +364,7 @@ $(document).ready(function () {
 <td align="right">0.647</td>
 </tr>
 <tr class="even">
-<td align="left">HIV_or_AID</td>
+<td align="left">HIV/AIDS</td>
 <td align="right">0</td>
 <td align="right">0.000</td>
 </tr>
@@ -378,17 +379,17 @@ $(document).ready(function () {
 <td align="right">22.192</td>
 </tr>
 <tr class="odd">
-<td align="left">thinness_1_19_years</td>
+<td align="left">thinness 1-19 years</td>
 <td align="right">34</td>
 <td align="right">1.157</td>
 </tr>
 <tr class="even">
-<td align="left">thinness_5_9_years</td>
+<td align="left">thinness 5-9 years</td>
 <td align="right">34</td>
 <td align="right">1.157</td>
 </tr>
 <tr class="odd">
-<td align="left">Income_composition_of_resources</td>
+<td align="left">Income composition of resources</td>
 <td align="right">167</td>
 <td align="right">5.684</td>
 </tr>
@@ -399,10 +400,115 @@ $(document).ready(function () {
 </tr>
 </tbody>
 </table>
-<p>The data-set consists of 22 columns and 2938 rows.</p>
-<p><img src="life_expectancy_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>Life Expectancy is normally distributed and is thus fit for prediction using linear regression</p>
-<p><img src="life_expectancy_files/figure-html/unnamed-chunk-5-1.png" width="960" /></p>
+<p>From the above table, most of the columns have missing values. We also observed that some columns have naming issues. We will rename all the columns by removing white spaces and replace missing values with mean value.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Factors</th>
+<th align="right">missing (count)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Country</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Year</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Status</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Life_expectancy</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Adult_Mortality</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">infant_deaths</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Alcohol</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">percentage_expenditure</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Hepatitis_B</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Measles</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">under_five_deaths</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Polio</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Total_expenditure</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Diphtheria</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">HIV_or_AID</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">GDP</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Population</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">thinness_1_19_years</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">thinness_5_9_years</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Income_composition_of_resources</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Schooling</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p>Looking closer into every factor, the factor <code>Status</code> is the country status according to WHO standards, <code>Developed</code> or <code>Developing</code>, which is non-numerical. We will transform it into a new binary numerical variable called <code>developed</code>, so that developed country is 1 and developing country is 0.</p>
+<p>Also, we need to perform data normalization for each numeric columns in the dataset to a common scale, without distorting differences in the ranges of values, therefore, we will choose min-max normalization technique to do so:</p>
+<p><span class="math display">\[\text{Min-Max Normalization = } \frac{(X-min(X))}{(max(X) - min(X))}\]</span></p>
+<p>Since we are interested in life expectancy, we will check the distribution of it. Below is the histogram of life expectancy, and it is normally distributed and thus fitting a linear regression is appropriate.</p>
+<p><img src="life_expectancy_files/figure-html/histogram-1.png" width="672" /></p>
+<p>There are also interactive histograms for every factor, please check the visualization on the website.</p>
+<p>Now, lets visualize the distribution of life expectancy against all variables.</p>
+<p><img src="life_expectancy_files/figure-html/unnamed-chunk-6-1.png" width="960" /></p>
+<p>There are also interactive scatter plots that correspond to the above section, please check the visualization on the website.</p>
+<p>From the above scatter plots, we can quickly tell that factors <code>Measles</code>, <code>under_five_deaths</code>, <code>Polio</code> and <code>Population</code> have no significant linear relationship with life expectancy. We will double check that by fitting a linear model for each variable with life expectancy.</p>
 <table>
 <thead>
 <tr class="header">
@@ -489,121 +595,935 @@ $(document).ready(function () {
 </tr>
 </tbody>
 </table>
-<pre><code>## # A tibble: 2,938 × 11
-##    Life_expectancy Adult_Mortality   BMI  Polio Diphtheria HIV_or_AID
-##              &lt;dbl&gt;           &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-##  1           0.545           0.363 0.210 0.0312      0.650          0
-##  2           0.448           0.374 0.204 0.573       0.619          0
-##  3           0.448           0.370 0.198 0.615       0.639          0
-##  4           0.440           0.375 0.192 0.667       0.670          0
-##  5           0.434           0.380 0.188 0.677       0.680          0
-##  6           0.427           0.385 0.182 0.656       0.660          0
-##  7           0.423           0.388 0.176 0.625       0.629          0
-##  8           0.414           0.396 0.170 0.635       0.639          0
-##  9           0.402           0.407 0.164 0.625       0.629          0
-## 10           0.398           0.407 0.159 0.573       0.577          0
-## # … with 2,928 more rows, and 5 more variables: thinness_1_19_years &lt;dbl&gt;,
-## #   thinness_5_9_years &lt;dbl&gt;, Income_composition_of_resources &lt;dbl&gt;,
-## #   Schooling &lt;dbl&gt;, developed &lt;dbl&gt;</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = Life_expectancy ~ ., data = filter_data)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.41313 -0.04237 -0.00023  0.04498  0.33521 
-## 
-## Coefficients:
-##                                  Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                      0.318359   0.009866  32.269  &lt; 2e-16 ***
-## Adult_Mortality                 -0.278548   0.011196 -24.879  &lt; 2e-16 ***
-## BMI                              0.078130   0.008305   9.407  &lt; 2e-16 ***
-## Polio                            0.056086   0.008357   6.712  2.3e-11 ***
-## Diphtheria                       0.076377   0.008368   9.127  &lt; 2e-16 ***
-## HIV_or_AID                      -0.451957   0.017277 -26.159  &lt; 2e-16 ***
-## thinness_1_19_years             -0.060097   0.027179  -2.211   0.0271 *  
-## thinness_5_9_years               0.006718   0.027558   0.244   0.8074    
-## Income_composition_of_resources  0.123597   0.011620  10.637  &lt; 2e-16 ***
-## Schooling                        0.277891   0.016624  16.716  &lt; 2e-16 ***
-## developed                        0.041075   0.004595   8.938  &lt; 2e-16 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.07981 on 2927 degrees of freedom
-## Multiple R-squared:  0.805,  Adjusted R-squared:  0.8043 
-## F-statistic:  1208 on 10 and 2927 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = Life_expectancy ~ ., data = filter_data)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.41672 -0.04281 -0.00021  0.04496  0.34864 
-## 
-## Coefficients:
-##                                  Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                      0.297301   0.008793  33.810  &lt; 2e-16 ***
-## Adult_Mortality                 -0.278786   0.011231 -24.822  &lt; 2e-16 ***
-## BMI                              0.092274   0.007692  11.996  &lt; 2e-16 ***
-## Polio                            0.055845   0.008384   6.661 3.23e-11 ***
-## Diphtheria                       0.077058   0.008395   9.179  &lt; 2e-16 ***
-## HIV_or_AID                      -0.455842   0.017316 -26.325  &lt; 2e-16 ***
-## Income_composition_of_resources  0.124425   0.011657  10.674  &lt; 2e-16 ***
-## Schooling                        0.285471   0.016604  17.193  &lt; 2e-16 ***
-## developed                        0.044646   0.004542   9.830  &lt; 2e-16 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.08009 on 2929 degrees of freedom
-## Multiple R-squared:  0.8035, Adjusted R-squared:  0.8029 
-## F-statistic:  1497 on 8 and 2929 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = Life_expectancy ~ ., data = train)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.41570 -0.04420  0.00015  0.04597  0.35024 
-## 
-## Coefficients:
-##                                  Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                      0.295240   0.010301  28.663  &lt; 2e-16 ***
-## Adult_Mortality                 -0.281972   0.012895 -21.867  &lt; 2e-16 ***
-## BMI                              0.096917   0.009067  10.690  &lt; 2e-16 ***
-## Polio                            0.060394   0.010052   6.008 2.19e-09 ***
-## Diphtheria                       0.073435   0.009747   7.534 7.16e-14 ***
-## HIV_or_AID                      -0.441305   0.019280 -22.890  &lt; 2e-16 ***
-## Income_composition_of_resources  0.126052   0.013704   9.198  &lt; 2e-16 ***
-## Schooling                        0.282551   0.019790  14.277  &lt; 2e-16 ***
-## developed                        0.041802   0.005291   7.900 4.37e-15 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.08063 on 2194 degrees of freedom
-## Multiple R-squared:  0.8037, Adjusted R-squared:  0.8029 
-## F-statistic:  1123 on 8 and 2194 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre><code>##        pred actual
-## 1 0.4873101 0.4345
-## 2 0.4775310 0.4269
-## 3 0.4342675 0.3985
-## 4 0.7208007 0.7571
-## 5 0.7138759 0.7552
-## 6 0.7080222 0.6926</code></pre>
-<pre><code>## [1] 0.006169641</code></pre>
-</div>
+<p>The above table shows the adjusted R squared for the linear model, and we will only consider the factors with adjusted R squared higher than 0.15. Therefore, we will drop factors <code>infant_deaths</code>, <code>Alcohol</code>, <code>percentage_expenditure</code>, <code>Hepatitis_B</code>, <code>Measles</code>, <code>under_five_deaths</code>, <code>Total_expenditure</code>, <code>GDP</code> and <code>Population</code>.</p>
 </div>
 <div id="results" class="section level2">
 <h2>Results</h2>
-<p>provide final, publication ready tables and figures from your analysis, refer to your website if needed</p>
+<p>After dropping factors not required, we fit a linear regression using the rest of factors. The table below shows the summary table of each factor, and it can be seen that the p-values for factors <code>thinness_1_19_years</code> and <code>thinness_5_9_years</code> are considerable large, meaning that these two factors are not significant in this linear regression.</p>
+<div id="rjtmpzhpdk" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#rjtmpzhpdk .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#rjtmpzhpdk .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rjtmpzhpdk .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#rjtmpzhpdk .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#rjtmpzhpdk .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rjtmpzhpdk .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rjtmpzhpdk .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#rjtmpzhpdk .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#rjtmpzhpdk .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#rjtmpzhpdk .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#rjtmpzhpdk .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#rjtmpzhpdk .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rjtmpzhpdk .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rjtmpzhpdk .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#rjtmpzhpdk .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#rjtmpzhpdk .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#rjtmpzhpdk .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rjtmpzhpdk .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#rjtmpzhpdk .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#rjtmpzhpdk .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rjtmpzhpdk .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#rjtmpzhpdk .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#rjtmpzhpdk .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rjtmpzhpdk .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rjtmpzhpdk .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#rjtmpzhpdk .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#rjtmpzhpdk .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rjtmpzhpdk .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rjtmpzhpdk .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rjtmpzhpdk .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rjtmpzhpdk .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rjtmpzhpdk .gt_left {
+  text-align: left;
+}
+
+#rjtmpzhpdk .gt_center {
+  text-align: center;
+}
+
+#rjtmpzhpdk .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rjtmpzhpdk .gt_font_normal {
+  font-weight: normal;
+}
+
+#rjtmpzhpdk .gt_font_bold {
+  font-weight: bold;
+}
+
+#rjtmpzhpdk .gt_font_italic {
+  font-style: italic;
+}
+
+#rjtmpzhpdk .gt_super {
+  font-size: 65%;
+}
+
+#rjtmpzhpdk .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#rjtmpzhpdk .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#rjtmpzhpdk .gt_slash_mark {
+  font-size: 0.7em;
+  line-height: 0.7em;
+  vertical-align: 0.15em;
+}
+
+#rjtmpzhpdk .gt_fraction_numerator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: 0.45em;
+}
+
+#rjtmpzhpdk .gt_fraction_denominator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: -0.05em;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Characteristic</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Beta</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>95% CI</strong><sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>p-value</strong></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">Adult_Mortality</td>
+<td class="gt_row gt_center">-0.28</td>
+<td class="gt_row gt_center">-0.30, -0.26</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">BMI</td>
+<td class="gt_row gt_center">0.08</td>
+<td class="gt_row gt_center">0.06, 0.09</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">Polio</td>
+<td class="gt_row gt_center">0.06</td>
+<td class="gt_row gt_center">0.04, 0.07</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">Diphtheria</td>
+<td class="gt_row gt_center">0.08</td>
+<td class="gt_row gt_center">0.06, 0.09</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">HIV_or_AID</td>
+<td class="gt_row gt_center">-0.45</td>
+<td class="gt_row gt_center">-0.49, -0.42</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">thinness_1_19_years</td>
+<td class="gt_row gt_center">-0.06</td>
+<td class="gt_row gt_center">-0.11, -0.01</td>
+<td class="gt_row gt_center">0.027</td></tr>
+    <tr><td class="gt_row gt_left">thinness_5_9_years</td>
+<td class="gt_row gt_center">0.01</td>
+<td class="gt_row gt_center">-0.05, 0.06</td>
+<td class="gt_row gt_center">0.8</td></tr>
+    <tr><td class="gt_row gt_left">Income_composition_of_resources</td>
+<td class="gt_row gt_center">0.12</td>
+<td class="gt_row gt_center">0.10, 0.15</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">Schooling</td>
+<td class="gt_row gt_center">0.28</td>
+<td class="gt_row gt_center">0.25, 0.31</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">developed</td>
+<td class="gt_row gt_center">0.04</td>
+<td class="gt_row gt_center">0.03, 0.05</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="4"><sup class="gt_footnote_marks">1</sup> CI = Confidence Interval</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+<p>Therefore, we will drop factors <code>thinness_1_19_years</code> and <code>thinness_5_9_years</code> and construct a new linear regression.</p>
+<div id="xnpqrskrnc" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#xnpqrskrnc .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#xnpqrskrnc .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xnpqrskrnc .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#xnpqrskrnc .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#xnpqrskrnc .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xnpqrskrnc .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xnpqrskrnc .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#xnpqrskrnc .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#xnpqrskrnc .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#xnpqrskrnc .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#xnpqrskrnc .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#xnpqrskrnc .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xnpqrskrnc .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xnpqrskrnc .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#xnpqrskrnc .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#xnpqrskrnc .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#xnpqrskrnc .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xnpqrskrnc .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#xnpqrskrnc .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#xnpqrskrnc .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xnpqrskrnc .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#xnpqrskrnc .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#xnpqrskrnc .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xnpqrskrnc .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xnpqrskrnc .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#xnpqrskrnc .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#xnpqrskrnc .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xnpqrskrnc .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xnpqrskrnc .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xnpqrskrnc .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xnpqrskrnc .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xnpqrskrnc .gt_left {
+  text-align: left;
+}
+
+#xnpqrskrnc .gt_center {
+  text-align: center;
+}
+
+#xnpqrskrnc .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#xnpqrskrnc .gt_font_normal {
+  font-weight: normal;
+}
+
+#xnpqrskrnc .gt_font_bold {
+  font-weight: bold;
+}
+
+#xnpqrskrnc .gt_font_italic {
+  font-style: italic;
+}
+
+#xnpqrskrnc .gt_super {
+  font-size: 65%;
+}
+
+#xnpqrskrnc .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#xnpqrskrnc .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#xnpqrskrnc .gt_slash_mark {
+  font-size: 0.7em;
+  line-height: 0.7em;
+  vertical-align: 0.15em;
+}
+
+#xnpqrskrnc .gt_fraction_numerator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: 0.45em;
+}
+
+#xnpqrskrnc .gt_fraction_denominator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: -0.05em;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Characteristic</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Beta</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>95% CI</strong><sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>p-value</strong></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">Adult_Mortality</td>
+<td class="gt_row gt_center">-0.28</td>
+<td class="gt_row gt_center">-0.30, -0.26</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">BMI</td>
+<td class="gt_row gt_center">0.09</td>
+<td class="gt_row gt_center">0.08, 0.11</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">Polio</td>
+<td class="gt_row gt_center">0.06</td>
+<td class="gt_row gt_center">0.04, 0.07</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">Diphtheria</td>
+<td class="gt_row gt_center">0.08</td>
+<td class="gt_row gt_center">0.06, 0.09</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">HIV_or_AID</td>
+<td class="gt_row gt_center">-0.46</td>
+<td class="gt_row gt_center">-0.49, -0.42</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">Income_composition_of_resources</td>
+<td class="gt_row gt_center">0.12</td>
+<td class="gt_row gt_center">0.10, 0.15</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">Schooling</td>
+<td class="gt_row gt_center">0.29</td>
+<td class="gt_row gt_center">0.25, 0.32</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+    <tr><td class="gt_row gt_left">developed</td>
+<td class="gt_row gt_center">0.04</td>
+<td class="gt_row gt_center">0.04, 0.05</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="4"><sup class="gt_footnote_marks">1</sup> CI = Confidence Interval</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+<p>In order to evaluate our model, we will split the dataset into training and testing set into 75% of training data and 25% of testing data. The mean squared error of testing set is 0.0061, which is quite small, we can conclude that the model is considerably appropriate.</p>
 </div>
 <div id="conclusions-and-summary" class="section level2">
 <h2>Conclusions and Summary</h2>
-<p>To improve the Life Expectancy:</p>
-<p>Polio, Hepatitis, Diptheria vaccination coverage should be increased</p>
-<p>Measures should be taken to ensure food security</p>
-<p>Measures should be taken to provide education and reduce the risks of infant mortality</p>
-<p>Resources should be utilized productively</p>
-<p>AIDS awarness campaigns should be organized.</p>
+<p>In conclusion, from the linear regression model, in order to increase the life expectancy, we should increase the vaccination coverage of Polio and Diphtheria. Also, reduce the risks of adult mortality and HIV/AIDS. Measures should be taken to provide better education, country development and health care.</p>
 </div>
 
 

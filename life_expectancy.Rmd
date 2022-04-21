@@ -1,7 +1,7 @@
 ---
 title: "Life Expectancy from WHO Dataset"
 author: "Shi Tang"
-date: "10/03/2022"
+date: "21/04/2022"
 output:
   pdf_document: default
   html_document: default
@@ -20,27 +20,28 @@ library(sjPlot)
 library(sjmisc)
 library(sjlabelled)
 library(ggpubr)
-
+library(gtsummary)
 ```
 
 ## Introduction
-Provide background on your dataset and formulated question
-### How does immunization coverage affect life expectancy for year 2015?
-A person's life expectancy is a statistical measure of the average time is expected to live, based on several factors such as birth, age, and other demographic factors. Indeed, the United Nations estimates a global average life expectancy of 72.6 years for 2019 – which is higher than in any country back in 1950. Therefore, I am interested in exploring the impact of immunization coverage on life expectancy for the year 2015.
 
-The data-set was from Kaggle https://www.kaggle.com/kumarajarshi/life-expectancy-who, and the original data related to life expectancy, health factors for 193 countries have been collected from WHO data repository website and its corresponding economic data was collected from United Nation website.
+### What aspect(s) should be considered in order to increase life expectancy?
+
+A person's life expectancy is a statistical measure of the average time is expected to live, based on several factors such as birth, age, and other demographic factors. Indeed, the United Nations estimates a global average life expectancy of 72.6 years for 2019 – which is higher than in any country back in 1950. Therefore, I am interested to find the factor(s) contributing to the increase in life expectancy using predictive model.
+
+The data was from Kaggle https://www.kaggle.com/kumarajarshi/life-expectancy-who. The data contains information related to life expectancy, health, economic and other factors for 193 countries from year 2000 to 2015. The original data related to life expectancy, health factors for 193 countries have been collected from `WHO` data repository website and its corresponding economic data was collected from `United Nation` website. 
 
 ## Methods
-include how and where the data were acquired, how you cleaned and wrangled the data, what tools you used for data exploration
 
-### Missing values
-```{r import data, echo = FALSE, include = FALSE}
+First, we need to import the data-set. The data-set consists of 22 columns and 2938 rows. 
+
+```{r import data, warning=FALSE, message=FALSE}
 data <- read_csv("data/life_expectancy_data.csv")
-data <- data %>%
-  rename("Life_expectancy" = "Life expectancy", "Adult_Mortality" = "Adult Mortality", "infant_deaths" = "infant deaths", "percentage_expenditure" = "percentage expenditure", "Hepatitis_B" = "Hepatitis B", "under_five_deaths" = "under-five deaths", "Total_expenditure" = "Total expenditure", "thinness_1_19_years" = "thinness  1-19 years", "thinness_5_9_years" = "thinness 5-9 years", "Income_composition_of_resources" = "Income composition of resources", "HIV_or_AID" = "HIV/AIDS")
 ```
 
-```{r}
+The following table shows all factors and their corresponding missing values count and percentage: 
+
+```{r, warning=FALSE, message=FALSE}
 null_values <- data %>% summarize_all(funs(sum(is.na(.))))
 null_values <- gather(null_values, Factors, 'missing (count)', Country:Schooling, factor_key=TRUE)
 null_values['missing (%)'] <- round(null_values['missing (count)']/dim(data)[1] * 100, 3)
@@ -48,18 +49,31 @@ null_values['missing (%)'] <- round(null_values['missing (count)']/dim(data)[1] 
 knitr::kable(null_values, digits = 4)
 ```
 
-The data-set consists of 22 columns and 2938 rows. 
+From the above table, most of the columns have missing values. We also observed that some columns have naming issues. We will rename all the columns by removing white spaces and replace missing values with mean value.
 
-```{r checking NAs, echo = FALSE, include = FALSE}
+```{r, warning=FALSE, message=FALSE}
+data <- data %>%
+  rename("Life_expectancy" = "Life expectancy", "Adult_Mortality" = "Adult Mortality", "infant_deaths" = "infant deaths", "percentage_expenditure" = "percentage expenditure", "Hepatitis_B" = "Hepatitis B", "under_five_deaths" = "under-five deaths", "Total_expenditure" = "Total expenditure", "thinness_1_19_years" = "thinness  1-19 years", "thinness_5_9_years" = "thinness 5-9 years", "Income_composition_of_resources" = "Income composition of resources", "HIV_or_AID" = "HIV/AIDS")
+```
+
+```{r, warning=FALSE, message=FALSE}
 NA_columns <- sapply(data, function(x) sum(is.na(x)))
-names(NA_columns[NA_columns > 0])
 
 for (i in names(NA_columns[NA_columns > 0])) {
   data[, i][is.na(data[, i])] <- as.numeric(lapply(data[, i], mean, na.rm = TRUE))
 }
 ```
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
+null_values_ <- data %>% summarize_all(funs(sum(is.na(.))))
+null_values_ <- gather(null_values_, Factors, 'missing (count)', Country:Schooling, factor_key=TRUE)
+
+knitr::kable(null_values_, digits = 4)
+```
+
+Looking closer into every factor, the factor `Status` is the country status according to WHO standards, `Developed` or `Developing`, which is non-numerical. We will transform it into a new binary numerical variable called `developed`, so that developed country is 1 and developing country is 0.
+
+```{r, warning=FALSE, message=FALSE}
 data <- data %>%
   mutate(developed = ifelse(Status == 'Developed', 1, 0))
 
@@ -67,7 +81,11 @@ data <- data %>%
   select(-Status)
 ```
 
-```{r}
+Also, we need to perform data normalization for each numeric columns in the dataset to a common scale, without distorting differences in the ranges of values, therefore, we will choose min-max normalization technique to do so: 
+
+$$\text{Min-Max Normalization = } \frac{(X-min(X))}{(max(X) - min(X))}$$
+
+```{r normalize, warning=FALSE, message=FALSE}
 normalize <- function(x){
   round((x-min(x))/(max(x)-min(x)), 4)
 }
@@ -75,12 +93,15 @@ normalize <- function(x){
 data[3:21] <- as.data.frame(lapply(data[3:21], normalize))
 ```
 
-```{r}
+Since we are interested in life expectancy, we will check the distribution of it. Below is the histogram of life expectancy, and it is normally distributed and thus fitting a linear regression is appropriate.
+
+```{r histogram, warning=FALSE, message=FALSE}
 hist(data$Life_expectancy, breaks = 30, xlab="Life expectancy", main = "Histogram of life expectancy")
 ```
 
-Life Expectancy is normally distributed and is thus fit for prediction using linear regression
+There are also interactive histograms for every factor, please check the visualization on the website.
 
+Now, lets visualize the distribution of life expectancy against all variables.
 
 ```{r warning=FALSE, message=FALSE, fig.height=12, fig.width=10}
 p1 <- ggplot(data = data, aes(x = Adult_Mortality, y = Life_expectancy)) + 
@@ -202,36 +223,48 @@ ggarrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16,
           ncol = 4, nrow = 5)
 ```
 
+There are also interactive scatter plots that correspond to the above section, please check the visualization on the website.
 
-```{r}
+From the above scatter plots, we can quickly tell that factors `Measles`,   `under_five_deaths`, `Polio` and `Population` have no significant linear relationship with life expectancy. We will double check that by fitting a linear model for each variable with life expectancy.
+
+```{r warning=FALSE, message=FALSE}
 adjusted_R_squared <- c(0.4847, 0.03827, 0.1531, 0.1455, 0.0412, 0.0245, 0.3125, 0.04918, 0.2128, 0.04293, 0.2258, 0.3094, 0.185, 4.55e-05, 0.2227, 0.2175, 0.4793, 0.5111, 0.232)
 
 variables <- c('Adult_Mortality', 'infant_deaths', 'Alcohol', 'percentage_expenditure', 'Hepatitis_B', 'Measles', 'BMI', 'under_five_deaths', 'Polio', 'Total_expenditure', 'Diphtheria', 'HIV_or_AID', 'GDP', 'Population', 'thinness_1_19_years', 'thinness_5_9_years', 'Income_composition_of_resources', 'Schooling', 'developed')
 
 table <- cbind(Variable = variables, 'Adjusted R Squared' = adjusted_R_squared)
 knitr::kable(table, digits = 4)
+```
 
+The above table shows the adjusted R squared for the linear model, and we will only consider the factors with adjusted R squared higher than 0.15. Therefore, we will drop factors `infant_deaths`, `Alcohol`, `percentage_expenditure`, `Hepatitis_B`, `Measles`, `under_five_deaths`, `Total_expenditure`, `GDP` and `Population`.
+
+```{r warning=FALSE, message=FALSE}
 dropped <- c('Country', 'Year', 'infant_deaths', 'Alcohol', 'percentage_expenditure', 'Hepatitis_B', 'Measles', 'under_five_deaths', 'Total_expenditure', 'GDP', 'Population')
 
 filter_data <- data %>%
   select(-one_of(dropped))
-
-filter_data
 ```
 
+## Results
 
-```{r}
+After dropping factors not required, we fit a linear regression using the rest of factors. The table below shows the summary table of each factor, and it can be seen that the p-values for factors `thinness_1_19_years` and `thinness_5_9_years` are considerable large, meaning that these two factors are not significant in this linear regression.
+
+```{r warning=FALSE, message=FALSE}
 mod <- lm(Life_expectancy~., data = filter_data)
-summary(mod)
+tbl_regression(mod)
 ```
 
-```{r}
+Therefore, we will drop factors `thinness_1_19_years` and `thinness_5_9_years` and construct a new linear regression. 
+
+```{r warning=FALSE, message=FALSE}
 filter_data <- filter_data %>%
   select(-c(thinness_1_19_years, thinness_5_9_years))
 
 mod_ <- lm(Life_expectancy~., data = filter_data)
-summary(mod_)
+tbl_regression(mod_)
 ```
+
+In order to evaluate our model, we will split the dataset into training and testing set into 75% of training data and 25% of testing data. The mean squared error of testing set is 0.0061, which is quite small, we can conclude that the model is considerably appropriate.
 
 ```{r}
 set.seed(101)
@@ -239,28 +272,13 @@ sample <- sample.int(n = nrow(filter_data), size = floor(.75*nrow(filter_data)),
 train <- filter_data[sample, ]
 test  <- filter_data[-sample, ]
 
-mod_ <- lm(Life_expectancy~., data = train)
-summary(mod_)
-
 pred_test <- predict(mod_, test)
 pred_data <- data.frame(pred = pred_test, actual = test$Life_expectancy)
-head(pred_data)
 
-mean((pred_data$actual - pred_data$pred)^2)
+# round(mean((pred_data$actual - pred_data$pred)^2) ,4 )
 ```
 
-## Results
-provide final, publication ready tables and figures from your analysis, refer to your website if needed
 
 ## Conclusions and Summary
-To improve the Life Expectancy:
 
-Polio, Hepatitis, Diptheria vaccination coverage should be increased
-
-Measures should be taken to ensure food security
-
-Measures should be taken to provide education and reduce the risks of infant mortality
-
-Resources should be utilized productively
-
-AIDS awarness campaigns should be organized.
+In conclusion, from the linear regression model, in order to increase the life expectancy, we should increase the vaccination coverage of Polio and Diphtheria. Also, reduce the risks of adult mortality and HIV/AIDS. Measures should be taken to provide better education, country development and health care.  
