@@ -13,7 +13,7 @@
 
 <meta name="date" content="2022-10-03" />
 
-<title>JSC370 2020: Midterm Project</title>
+<title>Life Expectancy from WHO Dataset</title>
 
 <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -34,8 +34,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -249,19 +247,11 @@ $(document).ready(function () {
   <a href="index.html">Home</a>
 </li>
 <li>
-  <a href="page3.html">Visualization Page</a>
+  <a href="life_expectancy.pdf">Report</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li>
-  <a href="https://github.com/JSC370/jsc370-2022/">
-    <span class="fa fa-github fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="https://jsc370.github.io/jsc370-2022/">JSC370 Home</a>
-</li>
+        
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -271,140 +261,349 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">JSC370 2020: Midterm Project</h1>
+<h1 class="title toc-ignore">Life Expectancy from WHO Dataset</h1>
 <h4 class="author">Shi Tang</h4>
 <h4 class="date">10/03/2022</h4>
 
 </div>
 
 
-<div id="how-does-immunization-coverage-affect-life-expectancy-for-year-2015" class="section level2">
-<h2>How does immunization coverage affect life expectancy for year 2015?</h2>
-<p>A person’s life expectancy is a statistical measure of the average time is expected to live, based on several factors such as birth, age, and other demographic factors. Indeed, the United Nations estimates a global average life expectancy of 72.6 years for 2019 – which is higher than in any country back in 1950. Therefore, I am interested in exploring the impact of immunization coverage on life expectancy for the year 2015.</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Provide background on your dataset and formulated question ### How does immunization coverage affect life expectancy for year 2015? A person’s life expectancy is a statistical measure of the average time is expected to live, based on several factors such as birth, age, and other demographic factors. Indeed, the United Nations estimates a global average life expectancy of 72.6 years for 2019 – which is higher than in any country back in 1950. Therefore, I am interested in exploring the impact of immunization coverage on life expectancy for the year 2015.</p>
 <p>The data-set was from Kaggle <a href="https://www.kaggle.com/kumarajarshi/life-expectancy-who" class="uri">https://www.kaggle.com/kumarajarshi/life-expectancy-who</a>, and the original data related to life expectancy, health factors for 193 countries have been collected from WHO data repository website and its corresponding economic data was collected from United Nation website.</p>
 </div>
 <div id="methods" class="section level2">
 <h2>Methods</h2>
-<p>The data-set consists of 22 columns and 2938 rows. Since we are only interested in immunization coverage for the year 2015, we will only select the columns we need from the data-set.</p>
-<p>Now, the data-set only contains 6 columns and 183 rows, including columns “Country”, “Year”, “Life expectancy”, “Hepatitis B”, “Polio” and “Diphtheria”.</p>
-<p>The columns “Life expectancy”, “Hepatitis B”, “Polio”, “Diphtheria” contain missing values. We will impute these missing values using the mean.</p>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   51.00   65.75   73.90   71.62   76.95   88.00</code></pre>
-<p>From the summary table of life expectancy, the minimum average lifespan is 51.0 years and the maximum average lifespan is 88.0 years with median average lifespan of 73.90 years.</p>
-<p>Below are 3 boxplots for Hepatitis B (HepB), Polio (Pol3) and Diphtheria tetanus toxoid and pertussis (DTP3) immunization coverage among 1-year-old in percentage.</p>
-<p><img src="life_expectancy_files/figure-html/unnamed-chunk-2-1.png" width="480" /><img src="life_expectancy_files/figure-html/unnamed-chunk-2-2.png" width="480" /><img src="life_expectancy_files/figure-html/unnamed-chunk-2-3.png" width="480" /></p>
-<p>The median among all countries for all three immunizations has over 90% coverage, with a mean of around 83% coverage.</p>
-<p>Recall that our primary question of interest is the impact of immunization coverage on life expectancy. Now, we will start to explore the relationship between immunization coverage and life expectancy by creating visualization plots.</p>
-</div>
-<div id="preliminary-results" class="section level2">
-<h2>Preliminary Results</h2>
-<p>First, we will create 3 scatterplots with regression lines showing the relationship between immunization coverage and life expectancy.</p>
-<p><img src="life_expectancy_files/figure-html/unnamed-chunk-3-1.png" width="480" /></p>
-<p><img src="life_expectancy_files/figure-html/unnamed-chunk-4-1.png" width="480" /></p>
-<p><img src="life_expectancy_files/figure-html/unnamed-chunk-5-1.png" width="480" /></p>
-<p>Looking at the scatterplots, all suggest that there’s a positive correlation between immunization coverage and life expectancy. We will further explore the correlation by creating a linear regression model to examine the association between life expectancy and Diphtheria, Polio and Hepatitis_B immunization coverage.</p>
-Here’s the table summary.
-<table style="border-collapse:collapse; border:none;">
-<tr>
-<th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">
- 
-</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">
-Life_expectancy
-</th>
+<p>include how and where the data were acquired, how you cleaned and wrangled the data, what tools you used for data exploration</p>
+<div id="missing-values" class="section level3">
+<h3>Missing values</h3>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Factors</th>
+<th align="right">missing (count)</th>
+<th align="right">missing (%)</th>
 </tr>
-<tr>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">
-Predictors
-</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
-Estimates
-</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
-CI
-</td>
-<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
-p
-</td>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Country</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
 </tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-(Intercept)
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-53.85
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-49.79 – 57.91
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-<strong>&lt;0.001</strong>
-</td>
+<tr class="even">
+<td align="left">Year</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
 </tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-Diphtheria
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.21
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.09 – 0.32
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-<strong>&lt;0.001</strong>
-</td>
+<tr class="odd">
+<td align="left">Status</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
 </tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-Polio
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.11
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.05 – 0.16
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-<strong>&lt;0.001</strong>
-</td>
+<tr class="even">
+<td align="left">Life_expectancy</td>
+<td align="right">10</td>
+<td align="right">0.340</td>
 </tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-Hepatitis B
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--0.11
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--0.21 – -0.00
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-<strong>0.040</strong>
-</td>
+<tr class="odd">
+<td align="left">Adult_Mortality</td>
+<td align="right">10</td>
+<td align="right">0.340</td>
 </tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
-Observations
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
-183
-</td>
+<tr class="even">
+<td align="left">infant_deaths</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
 </tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
-R<sup>2</sup> / R<sup>2</sup> adjusted
-</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
-0.327 / 0.316
-</td>
+<tr class="odd">
+<td align="left">Alcohol</td>
+<td align="right">194</td>
+<td align="right">6.603</td>
 </tr>
+<tr class="even">
+<td align="left">percentage_expenditure</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">Hepatitis_B</td>
+<td align="right">553</td>
+<td align="right">18.822</td>
+</tr>
+<tr class="even">
+<td align="left">Measles</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI</td>
+<td align="right">34</td>
+<td align="right">1.157</td>
+</tr>
+<tr class="even">
+<td align="left">under_five_deaths</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">Polio</td>
+<td align="right">19</td>
+<td align="right">0.647</td>
+</tr>
+<tr class="even">
+<td align="left">Total_expenditure</td>
+<td align="right">226</td>
+<td align="right">7.692</td>
+</tr>
+<tr class="odd">
+<td align="left">Diphtheria</td>
+<td align="right">19</td>
+<td align="right">0.647</td>
+</tr>
+<tr class="even">
+<td align="left">HIV_or_AID</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">GDP</td>
+<td align="right">448</td>
+<td align="right">15.248</td>
+</tr>
+<tr class="even">
+<td align="left">Population</td>
+<td align="right">652</td>
+<td align="right">22.192</td>
+</tr>
+<tr class="odd">
+<td align="left">thinness_1_19_years</td>
+<td align="right">34</td>
+<td align="right">1.157</td>
+</tr>
+<tr class="even">
+<td align="left">thinness_5_9_years</td>
+<td align="right">34</td>
+<td align="right">1.157</td>
+</tr>
+<tr class="odd">
+<td align="left">Income_composition_of_resources</td>
+<td align="right">167</td>
+<td align="right">5.684</td>
+</tr>
+<tr class="even">
+<td align="left">Schooling</td>
+<td align="right">163</td>
+<td align="right">5.548</td>
+</tr>
+</tbody>
 </table>
-<p>Looking at the summary table, the p-values for predictors diphtheria and polio are very small, which suggests that it’s unlikely that the relationship between weight and diphtheria and polio immunization coverage was due to chance.</p>
+<p>The data-set consists of 22 columns and 2938 rows.</p>
+<p><img src="life_expectancy_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Life Expectancy is normally distributed and is thus fit for prediction using linear regression</p>
+<p><img src="life_expectancy_files/figure-html/unnamed-chunk-5-1.png" width="960" /></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Variable</th>
+<th align="left">Adjusted R Squared</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Adult_Mortality</td>
+<td align="left">0.4847</td>
+</tr>
+<tr class="even">
+<td align="left">infant_deaths</td>
+<td align="left">0.03827</td>
+</tr>
+<tr class="odd">
+<td align="left">Alcohol</td>
+<td align="left">0.1531</td>
+</tr>
+<tr class="even">
+<td align="left">percentage_expenditure</td>
+<td align="left">0.1455</td>
+</tr>
+<tr class="odd">
+<td align="left">Hepatitis_B</td>
+<td align="left">0.0412</td>
+</tr>
+<tr class="even">
+<td align="left">Measles</td>
+<td align="left">0.0245</td>
+</tr>
+<tr class="odd">
+<td align="left">BMI</td>
+<td align="left">0.3125</td>
+</tr>
+<tr class="even">
+<td align="left">under_five_deaths</td>
+<td align="left">0.04918</td>
+</tr>
+<tr class="odd">
+<td align="left">Polio</td>
+<td align="left">0.2128</td>
+</tr>
+<tr class="even">
+<td align="left">Total_expenditure</td>
+<td align="left">0.04293</td>
+</tr>
+<tr class="odd">
+<td align="left">Diphtheria</td>
+<td align="left">0.2258</td>
+</tr>
+<tr class="even">
+<td align="left">HIV_or_AID</td>
+<td align="left">0.3094</td>
+</tr>
+<tr class="odd">
+<td align="left">GDP</td>
+<td align="left">0.185</td>
+</tr>
+<tr class="even">
+<td align="left">Population</td>
+<td align="left">4.55e-05</td>
+</tr>
+<tr class="odd">
+<td align="left">thinness_1_19_years</td>
+<td align="left">0.2227</td>
+</tr>
+<tr class="even">
+<td align="left">thinness_5_9_years</td>
+<td align="left">0.2175</td>
+</tr>
+<tr class="odd">
+<td align="left">Income_composition_of_resources</td>
+<td align="left">0.4793</td>
+</tr>
+<tr class="even">
+<td align="left">Schooling</td>
+<td align="left">0.5111</td>
+</tr>
+<tr class="odd">
+<td align="left">developed</td>
+<td align="left">0.232</td>
+</tr>
+</tbody>
+</table>
+<pre><code>## # A tibble: 2,938 × 11
+##    Life_expectancy Adult_Mortality   BMI  Polio Diphtheria HIV_or_AID
+##              &lt;dbl&gt;           &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+##  1           0.545           0.363 0.210 0.0312      0.650          0
+##  2           0.448           0.374 0.204 0.573       0.619          0
+##  3           0.448           0.370 0.198 0.615       0.639          0
+##  4           0.440           0.375 0.192 0.667       0.670          0
+##  5           0.434           0.380 0.188 0.677       0.680          0
+##  6           0.427           0.385 0.182 0.656       0.660          0
+##  7           0.423           0.388 0.176 0.625       0.629          0
+##  8           0.414           0.396 0.170 0.635       0.639          0
+##  9           0.402           0.407 0.164 0.625       0.629          0
+## 10           0.398           0.407 0.159 0.573       0.577          0
+## # … with 2,928 more rows, and 5 more variables: thinness_1_19_years &lt;dbl&gt;,
+## #   thinness_5_9_years &lt;dbl&gt;, Income_composition_of_resources &lt;dbl&gt;,
+## #   Schooling &lt;dbl&gt;, developed &lt;dbl&gt;</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Life_expectancy ~ ., data = filter_data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.41313 -0.04237 -0.00023  0.04498  0.33521 
+## 
+## Coefficients:
+##                                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                      0.318359   0.009866  32.269  &lt; 2e-16 ***
+## Adult_Mortality                 -0.278548   0.011196 -24.879  &lt; 2e-16 ***
+## BMI                              0.078130   0.008305   9.407  &lt; 2e-16 ***
+## Polio                            0.056086   0.008357   6.712  2.3e-11 ***
+## Diphtheria                       0.076377   0.008368   9.127  &lt; 2e-16 ***
+## HIV_or_AID                      -0.451957   0.017277 -26.159  &lt; 2e-16 ***
+## thinness_1_19_years             -0.060097   0.027179  -2.211   0.0271 *  
+## thinness_5_9_years               0.006718   0.027558   0.244   0.8074    
+## Income_composition_of_resources  0.123597   0.011620  10.637  &lt; 2e-16 ***
+## Schooling                        0.277891   0.016624  16.716  &lt; 2e-16 ***
+## developed                        0.041075   0.004595   8.938  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.07981 on 2927 degrees of freedom
+## Multiple R-squared:  0.805,  Adjusted R-squared:  0.8043 
+## F-statistic:  1208 on 10 and 2927 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Life_expectancy ~ ., data = filter_data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.41672 -0.04281 -0.00021  0.04496  0.34864 
+## 
+## Coefficients:
+##                                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                      0.297301   0.008793  33.810  &lt; 2e-16 ***
+## Adult_Mortality                 -0.278786   0.011231 -24.822  &lt; 2e-16 ***
+## BMI                              0.092274   0.007692  11.996  &lt; 2e-16 ***
+## Polio                            0.055845   0.008384   6.661 3.23e-11 ***
+## Diphtheria                       0.077058   0.008395   9.179  &lt; 2e-16 ***
+## HIV_or_AID                      -0.455842   0.017316 -26.325  &lt; 2e-16 ***
+## Income_composition_of_resources  0.124425   0.011657  10.674  &lt; 2e-16 ***
+## Schooling                        0.285471   0.016604  17.193  &lt; 2e-16 ***
+## developed                        0.044646   0.004542   9.830  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.08009 on 2929 degrees of freedom
+## Multiple R-squared:  0.8035, Adjusted R-squared:  0.8029 
+## F-statistic:  1497 on 8 and 2929 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Life_expectancy ~ ., data = train)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.41570 -0.04420  0.00015  0.04597  0.35024 
+## 
+## Coefficients:
+##                                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                      0.295240   0.010301  28.663  &lt; 2e-16 ***
+## Adult_Mortality                 -0.281972   0.012895 -21.867  &lt; 2e-16 ***
+## BMI                              0.096917   0.009067  10.690  &lt; 2e-16 ***
+## Polio                            0.060394   0.010052   6.008 2.19e-09 ***
+## Diphtheria                       0.073435   0.009747   7.534 7.16e-14 ***
+## HIV_or_AID                      -0.441305   0.019280 -22.890  &lt; 2e-16 ***
+## Income_composition_of_resources  0.126052   0.013704   9.198  &lt; 2e-16 ***
+## Schooling                        0.282551   0.019790  14.277  &lt; 2e-16 ***
+## developed                        0.041802   0.005291   7.900 4.37e-15 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.08063 on 2194 degrees of freedom
+## Multiple R-squared:  0.8037, Adjusted R-squared:  0.8029 
+## F-statistic:  1123 on 8 and 2194 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre><code>##        pred actual
+## 1 0.4873101 0.4345
+## 2 0.4775310 0.4269
+## 3 0.4342675 0.3985
+## 4 0.7208007 0.7571
+## 5 0.7138759 0.7552
+## 6 0.7080222 0.6926</code></pre>
+<pre><code>## [1] 0.006169641</code></pre>
 </div>
-<div id="conclusion" class="section level2">
-<h2>Conclusion</h2>
-<p>In conclusion, the scatterplots suggest that there are positive correlations between life expectancy and diphtheria, polio and hepatitis immunization coverage. The linear regression model, suggests that the positive relationship between weight and diphtheria and polio immunization coverage was unlikely due to chance.</p>
+</div>
+<div id="results" class="section level2">
+<h2>Results</h2>
+<p>provide final, publication ready tables and figures from your analysis, refer to your website if needed</p>
+</div>
+<div id="conclusions-and-summary" class="section level2">
+<h2>Conclusions and Summary</h2>
+<p>To improve the Life Expectancy:</p>
+<p>Polio, Hepatitis, Diptheria vaccination coverage should be increased</p>
+<p>Measures should be taken to ensure food security</p>
+<p>Measures should be taken to provide education and reduce the risks of infant mortality</p>
+<p>Resources should be utilized productively</p>
+<p>AIDS awarness campaigns should be organized.</p>
 </div>
 
 

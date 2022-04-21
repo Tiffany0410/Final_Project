@@ -1,12 +1,14 @@
 ---
-title: "JSC370 2020: Midterm Project"
+title: "Life Expectancy from WHO Dataset"
 author: "Shi Tang"
 date: "10/03/2022"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
@@ -17,111 +19,248 @@ library(dtplyr)
 library(sjPlot)
 library(sjmisc)
 library(sjlabelled)
+library(ggpubr)
+
 ```
 
-## How does immunization coverage affect life expectancy for year 2015?
+## Introduction
+Provide background on your dataset and formulated question
+### How does immunization coverage affect life expectancy for year 2015?
 A person's life expectancy is a statistical measure of the average time is expected to live, based on several factors such as birth, age, and other demographic factors. Indeed, the United Nations estimates a global average life expectancy of 72.6 years for 2019 – which is higher than in any country back in 1950. Therefore, I am interested in exploring the impact of immunization coverage on life expectancy for the year 2015.
 
 The data-set was from Kaggle https://www.kaggle.com/kumarajarshi/life-expectancy-who, and the original data related to life expectancy, health factors for 193 countries have been collected from WHO data repository website and its corresponding economic data was collected from United Nation website.
 
 ## Methods
+include how and where the data were acquired, how you cleaned and wrangled the data, what tools you used for data exploration
+
+### Missing values
 ```{r import data, echo = FALSE, include = FALSE}
-data <- read_csv("life_expectancy_data.csv")
-dim(data)
-str(data)
+data <- read_csv("data/life_expectancy_data.csv")
+data <- data %>%
+  rename("Life_expectancy" = "Life expectancy", "Adult_Mortality" = "Adult Mortality", "infant_deaths" = "infant deaths", "percentage_expenditure" = "percentage expenditure", "Hepatitis_B" = "Hepatitis B", "under_five_deaths" = "under-five deaths", "Total_expenditure" = "Total expenditure", "thinness_1_19_years" = "thinness  1-19 years", "thinness_5_9_years" = "thinness 5-9 years", "Income_composition_of_resources" = "Income composition of resources", "HIV_or_AID" = "HIV/AIDS")
 ```
 
-The data-set consists of 22 columns and 2938 rows. Since we are only interested in immunization coverage for the year 2015, we will only select the columns we need from the data-set. 
+```{r}
+null_values <- data %>% summarize_all(funs(sum(is.na(.))))
+null_values <- gather(null_values, Factors, 'missing (count)', Country:Schooling, factor_key=TRUE)
+null_values['missing (%)'] <- round(null_values['missing (count)']/dim(data)[1] * 100, 3)
 
-```{r select data, echo = FALSE, include = FALSE}
-filter_data <- data %>%
-  select(c("Country", "Year", "Life expectancy", "Hepatitis B", "Polio", "Diphtheria")) %>%
-  filter(Year == 2015) %>%
-  rename("Life_expectancy" = "Life expectancy", "Hepatitis_B" = "Hepatitis B")
-dim(filter_data)
+knitr::kable(null_values, digits = 4)
 ```
 
-Now, the data-set only contains 6 columns and 183 rows, including columns "Country", "Year", "Life expectancy", "Hepatitis B", "Polio" and "Diphtheria".
+The data-set consists of 22 columns and 2938 rows. 
 
 ```{r checking NAs, echo = FALSE, include = FALSE}
-NA_columns <- sapply(filter_data, function(x) sum(is.na(x)))
+NA_columns <- sapply(data, function(x) sum(is.na(x)))
 names(NA_columns[NA_columns > 0])
 
 for (i in names(NA_columns[NA_columns > 0])) {
-  filter_data[, i][is.na(filter_data[, i])] <- as.numeric(lapply(filter_data[, i], mean, na.rm = TRUE))
+  data[, i][is.na(data[, i])] <- as.numeric(lapply(data[, i], mean, na.rm = TRUE))
 }
 ```
 
-The columns "Life expectancy", "Hepatitis B", "Polio", "Diphtheria" contain missing values. We will impute these missing values using the mean.
+```{r}
+data <- data %>%
+  mutate(developed = ifelse(Status == 'Developed', 1, 0))
 
-```{r, echo = FALSE}
-summary(filter_data$Life_expectancy)
+data <- data %>%
+  select(-Status)
 ```
 
-From the summary table of life expectancy, the minimum average lifespan is 51.0 years and the maximum average lifespan is 88.0 years with median average lifespan of 73.90 years. 
+```{r}
+normalize <- function(x){
+  round((x-min(x))/(max(x)-min(x)), 4)
+}
 
-Below are 3 boxplots for Hepatitis B (HepB), Polio (Pol3) and Diphtheria tetanus toxoid and pertussis (DTP3) immunization coverage among 1-year-old in percentage.
-
-```{r fig.width = 5, fig.height = 4, echo=FALSE}
-ggplot(filter_data, aes(x = Hepatitis_B)) +
-  geom_boxplot() +
-  theme_minimal() +
-  labs(title = "Boxplot for HepB immnuization coverage")
-
-ggplot(filter_data, aes(x = Polio)) +
-  geom_boxplot() +
-  theme_minimal() +
-  labs(title = "Boxplot for Pol3 immnuization coverage")
-
-ggplot(filter_data, aes(x = Diphtheria)) +
-  geom_boxplot() +
-  theme_minimal() +
-  labs(title = "Boxplot for DTP3 immnuization coverage")
+data[3:21] <- as.data.frame(lapply(data[3:21], normalize))
 ```
 
-The median among all countries for all three immunizations has over 90% coverage, with a mean of around 83% coverage. 
-
-Recall that our primary question of interest is the impact of immunization coverage on life expectancy. Now, we will start to explore the relationship between immunization coverage and life expectancy by creating visualization plots.
-
-## Preliminary Results
-First, we will create 3 scatterplots with regression lines showing the relationship between immunization coverage and life expectancy.
-
-```{r fig.width = 5, fig.height = 4, echo=FALSE}
-ggplot(filter_data, aes(x = Hepatitis_B, y = Life_expectancy)) +
-  geom_point(size = 1, shape = 23) +
-  geom_smooth(method = "lm", formula = y~x, se = TRUE, col = "pink") +
-  theme_minimal() + 
-  labs(title = "Hepatitis_B vs Life expectancy", x = "Hepatitis B", y = "Life Expectancy")
+```{r}
+hist(data$Life_expectancy, breaks = 30, xlab="Life expectancy", main = "Histogram of life expectancy")
 ```
 
-```{r fig.width = 5, fig.height = 4, echo=FALSE}
-ggplot(filter_data, aes(x = Polio, y = Life_expectancy)) +
-  geom_point(size = 1, shape = 23) +
-  geom_smooth(method = "lm", formula = y~x, se = TRUE, col = "pink") +
-  theme_minimal() + 
-  labs(title = "Polio vs Life expectancy", x = "Polio", y = "Life Expectancy")
+Life Expectancy is normally distributed and is thus fit for prediction using linear regression
+
+
+```{r warning=FALSE, message=FALSE, fig.height=12, fig.width=10}
+p1 <- ggplot(data = data, aes(x = Adult_Mortality, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod1 <- lm(Life_expectancy ~ Adult_Mortality, data = data)
+
+p2 <- ggplot(data = data, aes(x = infant_deaths, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod2 <- lm(Life_expectancy ~ infant_deaths, data = data)
+  
+p3 <- ggplot(data = data, aes(x = Alcohol, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod3 <- lm(Life_expectancy ~ Alcohol, data = data)
+
+p4 <- ggplot(data = data, aes(x = percentage_expenditure, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod4 <- lm(Life_expectancy ~ percentage_expenditure, data = data)
+
+p5 <- ggplot(data = data, aes(x = Hepatitis_B, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod5 <- lm(Life_expectancy ~ Hepatitis_B, data = data)
+
+p6 <- ggplot(data = data, aes(x = Measles, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod6 <- lm(Life_expectancy ~ Measles, data = data)
+
+p7 <- ggplot(data = data, aes(x = BMI, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod7 <- lm(Life_expectancy ~ BMI, data = data)
+
+p8 <- ggplot(data = data, aes(x = under_five_deaths, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod8 <- lm(Life_expectancy ~ under_five_deaths, data = data)
+
+p9 <- ggplot(data = data, aes(x = Polio, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod9 <- lm(Life_expectancy ~ Polio, data = data)
+
+p10 <- ggplot(data = data, aes(x = Total_expenditure, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod10 <- lm(Life_expectancy ~ Total_expenditure, data = data)
+
+p11 <- ggplot(data = data, aes(x = Diphtheria, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod11 <- lm(Life_expectancy ~ Diphtheria, data = data)
+
+p12 <- ggplot(data = data, aes(x = HIV_or_AID, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod12 <- lm(Life_expectancy ~ HIV_or_AID, data = data)
+
+p13 <- ggplot(data = data, aes(x = GDP, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod13 <- lm(Life_expectancy ~ GDP, data = data)
+
+p14 <- ggplot(data = data, aes(x = Population, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod14 <- lm(Life_expectancy ~ Population, data = data)
+
+p15 <- ggplot(data = data, aes(x = thinness_1_19_years, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod15 <- lm(Life_expectancy ~ thinness_1_19_years, data = data)
+
+p16 <- ggplot(data = data, aes(x = thinness_5_9_years, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod16 <- lm(Life_expectancy ~ thinness_5_9_years, data = data)
+
+p17 <- ggplot(data = data, aes(x = Income_composition_of_resources, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod17 <- lm(Life_expectancy ~ Income_composition_of_resources, data = data)
+
+p18 <- ggplot(data = data, aes(x = Schooling, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod18 <- lm(Life_expectancy ~ Schooling, data = data)
+
+p19 <- ggplot(data = data, aes(x = developed, y = Life_expectancy)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+mod19 <- lm(Life_expectancy ~ developed, data = data)
+
+ggarrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19,
+          labels = c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S"),
+          ncol = 4, nrow = 5)
 ```
 
-```{r fig.width = 5, fig.height = 4, echo=FALSE}
-ggplot(filter_data, aes(x = Diphtheria, y = Life_expectancy)) +
-  geom_point(size = 1, shape = 23) +
-  geom_smooth(method = "lm", formula = y~x, se = TRUE, col = "pink") +
-  theme_minimal() + 
-  labs(title = "Diphtheria vs Life expectancy", x = "Diphtheria", y = "Life Expectancy")
+
+```{r}
+adjusted_R_squared <- c(0.4847, 0.03827, 0.1531, 0.1455, 0.0412, 0.0245, 0.3125, 0.04918, 0.2128, 0.04293, 0.2258, 0.3094, 0.185, 4.55e-05, 0.2227, 0.2175, 0.4793, 0.5111, 0.232)
+
+variables <- c('Adult_Mortality', 'infant_deaths', 'Alcohol', 'percentage_expenditure', 'Hepatitis_B', 'Measles', 'BMI', 'under_five_deaths', 'Polio', 'Total_expenditure', 'Diphtheria', 'HIV_or_AID', 'GDP', 'Population', 'thinness_1_19_years', 'thinness_5_9_years', 'Income_composition_of_resources', 'Schooling', 'developed')
+
+table <- cbind(Variable = variables, 'Adjusted R Squared' = adjusted_R_squared)
+knitr::kable(table, digits = 4)
+
+dropped <- c('Country', 'Year', 'infant_deaths', 'Alcohol', 'percentage_expenditure', 'Hepatitis_B', 'Measles', 'under_five_deaths', 'Total_expenditure', 'GDP', 'Population')
+
+filter_data <- data %>%
+  select(-one_of(dropped))
+
+filter_data
 ```
 
-Looking at the scatterplots, all suggest that there's a positive correlation between immunization coverage and life expectancy. We will further explore the correlation by creating a linear regression model to examine the association between life expectancy and Diphtheria, Polio and Hepatitis_B immunization coverage.
 
-```{r echo=FALSE, include=FALSE}
-lm_mod <- lm(Life_expectancy ~ Diphtheria + Polio + Hepatitis_B, data = filter_data)
+```{r}
+mod <- lm(Life_expectancy~., data = filter_data)
+summary(mod)
 ```
 
-Here's the table summary. 
-```{r echo=FALSE}
-tab_model(lm_mod)
+```{r}
+filter_data <- filter_data %>%
+  select(-c(thinness_1_19_years, thinness_5_9_years))
+
+mod_ <- lm(Life_expectancy~., data = filter_data)
+summary(mod_)
 ```
 
-Looking at the summary table, the p-values for predictors diphtheria and polio are very small, which suggests that it's unlikely that the relationship between weight and diphtheria and polio immunization coverage was due to chance.
+```{r}
+set.seed(101)
+sample <- sample.int(n = nrow(filter_data), size = floor(.75*nrow(filter_data)), replace = F)
+train <- filter_data[sample, ]
+test  <- filter_data[-sample, ]
 
-## Conclusion
-In conclusion, the scatterplots suggest that there are positive correlations between life expectancy and diphtheria, polio and hepatitis immunization coverage. The linear regression model, suggests that the positive relationship between weight and diphtheria and polio immunization coverage was unlikely due to chance.
+mod_ <- lm(Life_expectancy~., data = train)
+summary(mod_)
+
+pred_test <- predict(mod_, test)
+pred_data <- data.frame(pred = pred_test, actual = test$Life_expectancy)
+head(pred_data)
+
+mean((pred_data$actual - pred_data$pred)^2)
+```
+
+## Results
+provide final, publication ready tables and figures from your analysis, refer to your website if needed
+
+## Conclusions and Summary
+To improve the Life Expectancy:
+
+Polio, Hepatitis, Diptheria vaccination coverage should be increased
+
+Measures should be taken to ensure food security
+
+Measures should be taken to provide education and reduce the risks of infant mortality
+
+Resources should be utilized productively
+
+AIDS awarness campaigns should be organized.

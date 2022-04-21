@@ -8,3 +8,77 @@ output:
 ---
 
 This is my JSC370 Final Project website.
+
+## What aspect(s) should be considered in order to increase life expectancy?
+
+A person's life expectancy is a statistical measure of the average time is expected to live, based on several factors such as birth, age, and other demographic factors. Indeed, the United Nations estimates a global average life expectancy of 72.6 years for 2019 – which is higher than in any country back in 1950. Therefore, I am interested to find the factor(s) contributing to the increase in life expectancy using predictive model.
+
+The data was from Kaggle https://www.kaggle.com/kumarajarshi/life-expectancy-who. The data contains information related to life expectancy, health, economic and other factors for 193 countries from year 2000 to 2015. The original data related to life expectancy, health factors for 193 countries have been collected from `WHO` data repository website and its corresponding economic data was collected from `United Nation` website. 
+
+
+
+### Interactive Visualizations
+
+```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
+library(data.table)
+library(tidyverse)
+library(dplyr)
+library(plotly)
+library(DT)
+library(knitr)
+
+# Initialize code chunk options
+opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  eval=TRUE,
+  echo = TRUE,
+  cache = FALSE,
+  fig.width = 7, 
+  fig.align = 'center',
+  fig.asp = 0.618,
+  out.width = "700px",
+  class.source = "code-r")
+```
+
+```{css, echo = FALSE}
+.code-r { /* Code block */
+  font-size: 15px;
+}
+
+.code-r-small { /* Code block */
+  font-size: 10px;
+}
+```
+
+```{r load-data, echo = FALSE, message=FALSE, warning=FALSE}
+source("process_data.R")
+```
+
+```{r plot1, class.source="code-r-small", echo = FALSE, message=FALSE, warning=FALSE}
+p1_histogram <- long_data_2 %>%
+  plot_ly(x = ~value, type = 'histogram', color = ~parameter) %>%
+  layout(title = "Histogram for different factors", yaxis=list(title = "Frequency"), xaxis=list(title = "Value"),
+        hovermode = "compare")
+```
+
+```{r plot2, class.source="code-r-small", echo = FALSE, message=FALSE, warning=FALSE}
+p2_scatter <- long_data %>% 
+  plot_ly(x = ~value, y = ~Life_expectancy,
+          type = 'scatter', mode = 'markers', color = ~parameter) %>%
+  layout(title = "Life expectancy vs. different factors",
+                  yaxis = list(title = "Life Expectancy"),
+        hovermode = "compare")
+```
+
+### Histogram for every factors
+
+```{r p1, echo=FALSE}
+p1_histogram
+```
+
+### Distribution of life expectancy against all factors
+
+```{r p2, echo=FALSE}
+p2_scatter
+```
